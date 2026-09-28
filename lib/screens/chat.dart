@@ -22,14 +22,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
     await fcm.subscribeToTopic('chat');
 
-    // if (token != null && FirebaseAuth.instance.currentUser != null) {
-    //   await FirebaseFirestore.instance
-    //       .collection('users')
-    //       .doc(FirebaseAuth.instance.currentUser!.uid)
-    //       .update({'fcmToken': token});
-    // }
+    if (token != null && FirebaseAuth.instance.currentUser != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'fcmToken': token});
+    }
 
-    // print('FCM Token: $token');
+    print('FCM Token: $token');
   }
 
   @override

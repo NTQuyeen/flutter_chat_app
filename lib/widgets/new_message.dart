@@ -25,13 +25,16 @@ class _NewMessageState extends State<NewMessage> {
 
   void _submitMessage() async {
     final enteredMessage = _messageController.text;
+
     if (enteredMessage.trim().isEmpty) {
       return;
     }
+
     _messageController.clear();
     FocusScope.of(context).unfocus();
 
     final user = FirebaseAuth.instance.currentUser!;
+
     final userData = await FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
@@ -45,16 +48,19 @@ class _NewMessageState extends State<NewMessage> {
       'userImage': userData.data()!['imageUrl'],
     });
 
-    // Gửi notification
-    await http.post(
+    final response = await http.post(
       Uri.parse('http://10.0.2.2:3000/send-notification'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
+        'senderId': user.uid,
         'title': userData.data()!['username'],
         'body': enteredMessage,
-        'senderId': user.uid,
       }),
     );
+
+    if (response.statusCode != 200) {
+      debugPrint('Gửi notification thất bại: ${response.body}');
+    }
   }
 
   @override
